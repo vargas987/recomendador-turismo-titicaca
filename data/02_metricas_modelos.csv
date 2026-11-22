@@ -1,0 +1,4 @@
+﻿,Accuracy,AUC,F1 (satisf.),F1-macro,Precisión,Recall
+Random Forest,0.854,0.65,0.92,0.523,0.88,0.964
+XGBoost,0.812,0.717,0.89,0.624,0.912,0.869
+Texto (TF-IDF),0.817,0.601,0.893,0.623,0.902,0.885

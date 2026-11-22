@@ -1,0 +1,104 @@
+{
+  "n_total_descargadas": 500,
+  "n_periodo_2020_2025": 319,
+  "tasa_satisfaccion_%": 87.1,
+  "satisfechos": 278,
+  "insatisfechos": 41,
+  "mejor_modelo_tabular": "XGBoost",
+  "auc_mejor_tabular": 0.717,
+  "auc_texto": 0.601,
+  "metricas": {
+    "Random Forest": {
+      "acc": 0.854,
+      "auc": 0.65,
+      "f1": 0.92,
+      "f1m": 0.523,
+      "prec": 0.88,
+      "rec": 0.964
+    },
+    "XGBoost": {
+      "acc": 0.812,
+      "auc": 0.717,
+      "f1": 0.89,
+      "f1m": 0.624,
+      "prec": 0.912,
+      "rec": 0.869
+    },
+    "Texto (TF-IDF)": {
+      "acc": 0.817,
+      "auc": 0.601,
+      "f1": 0.893,
+      "f1m": 0.623,
+      "prec": 0.902,
+      "rec": 0.885
+    }
+  },
+  "top_factores_shap": [
+    "author_photos_count",
+    "n_palabras",
+    "author_reviews_count",
+    "ratio_mayus",
+    "Islas Uros",
+    "idioma=otro",
+    "mes",
+    "n_caracteres",
+    "temporada_alta",
+    "Isla Amantaní"
+  ],
+  "palabras_satisfaccion": [
+    "bonito",
+    "lindo",
+    "hermoso",
+    "titicaca",
+    "te",
+    "visitar",
+    "interesante",
+    "vistas",
+    "sobre",
+    "sitio",
+    "recomendado",
+    "historia",
+    "lago titicaca",
+    "as",
+    "island"
+  ],
+  "palabras_insatisfaccion": [
+    "soles",
+    "ofrecen",
+    "no",
+    "nada",
+    "frio",
+    "alto",
+    "inca",
+    "despues",
+    "foi",
+    "just",
+    "increible",
+    "ir",
+    "era",
+    "lago",
+    "if"
+  ],
+  "atractivos": {
+    "Islas Uros": {
+      "tasa_%": 65.0,
+      "n": 40
+    },
+    "Reserva Nac. Titicaca": {
+      "tasa_%": 81.2,
+      "n": 96
+    },
+    "Isla Taquile": {
+      "tasa_%": 92.9,
+      "n": 56
+    },
+    "Sillustani": {
+      "tasa_%": 95.7,
+      "n": 47
+    },
+    "Isla Amantaní": {
+      "tasa_%": 96.2,
+      "n": 80
+    }
+  }
+}

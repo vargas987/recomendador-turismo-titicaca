@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Titicaca Smart Tourism</title>
+<meta name="description" content="Sistema inteligente de recomendación turística y predicción explicable de la satisfacción (SHAP) para el Lago Titicaca, con soporte multilingüe (español, quechua y aymara).">
+<meta name="theme-color" content="#0b6e8c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#eef3f6; --surface:#ffffff; --surface2:#f3f8fa; --ink:#132430; --muted:#5a7080;
+  --line:#dbe6ec; --primary:#0b6e8c; --primary-ink:#ffffff; --accent:#dd8a2b; --good:#2e7d5b; --bad:#c0392b;
+  --shadow:0 1px 2px rgba(19,36,48,.06),0 8px 24px rgba(19,36,48,.07);
+  --r:16px; --maxw:960px;
+  --sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --disp:'Space Grotesk',var(--sans);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1318; --surface:#121e26; --surface2:#172730; --ink:#e8f0f4; --muted:#93a7b2;
+  --line:#22333d; --primary:#38b6d3; --primary-ink:#06202a; --accent:#e6a24b; --good:#4fb488; --bad:#e06a5a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0b1318; --surface:#121e26; --surface2:#172730; --ink:#e8f0f4; --muted:#93a7b2;
+  --line:#22333d; --primary:#38b6d3; --primary-ink:#06202a; --accent:#e6a24b; --good:#4fb488; --bad:#e06a5a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;margin:0}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--disp);text-wrap:balance;margin:0}
+.eyebrow{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);font-weight:700}
+.muted{color:var(--muted)}
+button{font-family:var(--sans);cursor:pointer}
+.hero{background:linear-gradient(160deg,#0b6e8c 0%,#0a5e78 55%,#124b5e 100%);color:#eaf6fb;
+  margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 2.4rem);padding-bottom:2.4rem}
+:root[data-theme="dark"] .hero,@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero{background:linear-gradient(160deg,#0e4256 0%,#0b3340 60%,#0a2a35 100%)}}
+.hero .wrap{padding-block:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;font-size:1.05rem}
+.logo{width:30px;height:30px;flex:none}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lang{display:inline-flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;color:#cfe9f2;padding:5px 11px;border-radius:999px;font-size:.82rem;font-weight:600}
+.lang button[aria-pressed="true"]{background:#eaf6fb;color:#0a5068}
+.theme-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#eaf6fb;border-radius:999px;width:34px;height:34px;font-size:1rem}
+.hero h1{font-size:clamp(1.7rem,5.2vw,2.7rem);margin:1.4rem 0 .5rem;line-height:1.1}
+.hero p.lead{font-size:1.05rem;max-width:40ch;color:#d5edf5;margin:0}
+.hero .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.1rem}
+.hero .tags span{font-size:.75rem;background:rgba(255,255,255,.14);padding:5px 10px;border-radius:999px}
+section{padding-block:2.2rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.panel{padding:1.3rem}
+h2.sec{font-size:1.35rem;margin-bottom:.3rem}
+.q-label{font-weight:600;margin:1rem 0 .5rem;display:block;font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:8px 13px;font-size:.88rem;font-weight:500;transition:.15s}
+.chip[aria-pressed="true"]{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.row2{display:flex;gap:14px;flex-wrap:wrap;margin-top:.4rem}
+.field{flex:1;min-width:140px}
+select{width:100%;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:.9rem}
+.cta{margin-top:1.3rem;background:var(--accent);color:#2a1a07;border:0;border-radius:12px;padding:12px 22px;font-weight:700;font-size:1rem;width:100%}
+.cta:hover{filter:brightness(1.05)}
+.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:1.2rem}
+.rec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.rec .top{height:84px;position:relative;display:flex;align-items:flex-end;padding:10px;color:#fff;font-weight:700;font-family:var(--disp)}
+.rec .match{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);color:#fff;font-size:.78rem;font-weight:700;padding:3px 9px;border-radius:999px}
+.rec .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
+.rec .desc{font-size:.85rem;color:var(--muted);min-width:0}
+.rec .tgs{display:flex;flex-wrap:wrap;gap:5px}
+.rec .tgs b{font-weight:500;font-size:.72rem;background:var(--surface2);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+.rec .why{font-size:.78rem;color:var(--good);font-weight:600;margin-top:auto}
+.bar{height:6px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--accent))}
+.chart{display:flex;flex-direction:column;gap:11px;margin-top:1rem}
+.crow{display:grid;grid-template-columns:150px 1fr auto;align-items:center;gap:10px;font-size:.88rem}
+.crow .track{background:var(--surface2);border-radius:999px;height:20px;overflow:hidden}
+.crow .track>i{display:block;height:100%;border-radius:999px}
+.crow .val{font-variant-numeric:tabular-nums;font-weight:700}
+/* stats + palabras (modelo) */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:1rem}
+.stat{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat .big{font-family:var(--disp);font-size:1.7rem;font-weight:700;color:var(--primary)}
+.stat small{color:var(--muted);font-size:.78rem}
+.wordwrap{display:flex;gap:18px;flex-wrap:wrap;margin-top:1rem}
+.wordcol{flex:1;min-width:200px}
+.wordcol h3{font-size:.95rem;margin-bottom:.5rem}
+.wtag{display:inline-block;margin:3px;padding:5px 11px;border-radius:999px;font-size:.84rem;font-weight:600}
+.wtag.pos{background:rgba(46,125,91,.14);color:var(--good);border:1px solid var(--good)}
+.wtag.neg{background:rgba(192,57,43,.12);color:var(--bad);border:1px solid var(--bad)}
+.chat{display:flex;flex-direction:column;gap:10px}
+.msgs{display:flex;flex-direction:column;gap:8px;min-height:84px}
+.msg{max-width:85%;padding:9px 12px;border-radius:14px;font-size:.9rem}
+.msg.bot{background:var(--surface2);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.me{background:var(--primary);color:var(--primary-ink);align-self:flex-end;border-bottom-right-radius:4px}
+.chat .inrow{display:flex;gap:8px}
+.chat input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans)}
+.chat .send{border:0;background:var(--primary);color:var(--primary-ink);border-radius:10px;padding:0 16px;font-weight:600}
+.install{display:none;margin-top:1rem;background:var(--primary);color:var(--primary-ink);border:0;border-radius:12px;padding:11px 20px;font-weight:700}
+footer{border-top:1px solid var(--line);padding-block:1.6rem;color:var(--muted);font-size:.82rem}
+footer b{color:var(--ink)}
+.note{font-size:.78rem;color:var(--muted);margin-top:.6rem}
+a{color:var(--primary)}
+@media (max-width:480px){.crow{grid-template-columns:110px 1fr auto}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#eaf6fb"/><path d="M4 20c3-2 5-2 8 0s5 2 8 0 5-2 8 0" stroke="#0b6e8c" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M12 13l4-5 4 5z" fill="#dd8a2b"/></svg>
+        <span data-t="brand">Titicaca Smart Tourism</span>
+      </div>
+      <div class="controls">
+        <div class="lang" role="group" aria-label="Idioma">
+          <button data-lang="es" aria-pressed="true">ES</button>
+          <button data-lang="qu" aria-pressed="false">Quechua</button>
+          <button data-lang="ay" aria-pressed="false">Aymara</button>
+        </div>
+        <button class="theme-btn" id="theme" title="Tema" aria-label="Cambiar tema">◐</button>
+      </div>
+    </div>
+    <h1 data-t="title">Tu viaje al Lago Titicaca, recomendado para ti</h1>
+    <p class="lead" data-t="lead">Sistema inteligente que predice qué atractivos disfrutarás más, con soporte en español, quechua y aymara.</p>
+    <div class="tags">
+      <span data-t="tag1">🤖 Recomendación con IA</span>
+      <span data-t="tag2">🗣️ Multilingüe</span>
+      <span data-t="tag3">🌱 Turismo sostenible</span>
+    </div>
+    <button class="install" id="install" data-t="b_install">📲 Instalar app</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <span class="eyebrow" data-t="eye1">Recomendador</span>
+    <h2 class="sec" data-t="h_form">¿Qué tipo de experiencia buscas?</h2>
+    <p class="muted" data-t="p_form">Elige tus intereses y te recomendamos los atractivos del lago con mayor afinidad.</p>
+    <div class="card panel" style="margin-top:1rem">
+      <label class="q-label" data-t="l_int">Intereses</label>
+      <div class="chips" id="chips"></div>
+      <div class="row2">
+        <div class="field">
+          <label class="q-label" style="margin-top:.6rem" data-t="l_bud">Presupuesto</label>
+          <select id="budget"><option value="bajo" data-t="o_low">Económico</option><option value="medio" selected data-t="o_mid">Medio</option><option value="alto" data-t="o_high">Alto</option></select>
+        </div>
+        <div class="field">
+          <label class="q-label" style="margin-top:.6rem" data-t="l_dur">Duración</label>
+          <select id="dur"><option value="1" data-t="o_d1">1 día</option><option value="2" selected data-t="o_d2">2 días</option><option value="3" data-t="o_d3">3+ días</option></select>
+        </div>
+      </div>
+      <button class="cta" id="go" data-t="b_go">Recomendar mi viaje</button>
+    </div>
+    <div class="results" id="results"></div>
+    <p class="note" data-t="note_rec">La afinidad combina tus intereses con la satisfacción real del modelo por atractivo.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow" data-t="eye_m">Resultados del modelo</span>
+    <h2 class="sec" data-t="h_model">Satisfacción del visitante (modelo real)</h2>
+    <p class="muted" data-t="p_model">319 reseñas reales de Google Maps (2020–2025), clasificadas con XGBoost e interpretadas con SHAP.</p>
+    <div class="card panel" style="margin-top:1rem">
+      <div class="stats">
+        <div class="stat"><div class="big">87.1%</div><small data-t="s_sat">Satisfacción global</small></div>
+        <div class="stat"><div class="big">0.72</div><small data-t="s_auc">AUC (XGBoost)</small></div>
+        <div class="stat"><div class="big">319</div><small data-t="s_n">Reseñas 2020–2025</small></div>
+        <div class="stat"><div class="big">5</div><small data-t="s_atr">Atractivos</small></div>
+      </div>
+      <h3 style="margin-top:1.4rem;font-size:1rem" data-t="h_bar">Satisfacción por atractivo</h3>
+      <div class="chart" id="chartSat"></div>
+      <div class="wordwrap">
+        <div class="wordcol">
+          <h3 data-t="h_pos">😊 Palabras de satisfacción</h3>
+          <div id="posWords"></div>
+        </div>
+        <div class="wordcol">
+          <h3 data-t="h_neg">😠 Palabras de insatisfacción</h3>
+          <div id="negWords"></div>
+        </div>
+      </div>
+      <p class="note" data-t="note_model">Hallazgo: las Islas Uros, el atractivo más visitado, tienen la menor satisfacción (65%) por quejas de precio ("soles").</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow" data-t="eye2">Datos oficiales</span>
+    <h2 class="sec" data-t="h_data">Visitantes al Lago Titicaca en 2025</h2>
+    <p class="muted" data-t="p_data">Llegadas por atractivo. Fuente oficial MINCETUR (datosTurismo).</p>
+    <div class="card panel" style="margin-top:1rem">
+      <div class="chart" id="chart"></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow" data-t="eye3">Asistente</span>
+    <h2 class="sec" data-t="h_chat">Pregúntale al asistente multilingüe</h2>
+    <div class="card panel" style="margin-top:1rem">
+      <div class="chat">
+        <div class="msgs" id="msgs"></div>
+        <div class="inrow">
+          <input id="chatin" data-ph="ph_chat" placeholder="Escribe en español, quechua o aymara…">
+          <button class="send" id="chatsend" data-t="b_send">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p><b>Titicaca Smart Tourism</b> — <span data-t="foot1">Prototipo de tesis: recomendación turística con aprendizaje automático, predicción explicable de la satisfacción (SHAP), soporte quechua/aymara y mejora continua (MLOps).</span></p>
+  <p data-t="foot2">Datos: Google Maps (satisfacción) + MINCETUR (visitantes). Elroy Vargas · Juliaca, Puno.</p>
+</footer>
+
+<script>
+/* ---------- datos atractivos (visitantes 2025 oficiales + satisfacción real del modelo) ---------- */
+const ATTR=[
+ {id:"uros",name:"Islas Uros",color:"#0b6e8c",tags:["Vivencial","Cultura","Naturaleza"],desc:"Islas flotantes de totora, turismo vivencial con familias uros.",v2025:73942,sat:65.0},
+ {id:"taquile",name:"Isla Taquile",color:"#1a7f94",tags:["Cultura","Vivencial","Historia"],desc:"Textilería Patrimonio de la Humanidad y vistas del lago.",v2025:62546,sat:92.9},
+ {id:"amantani",name:"Isla Amantaní",color:"#2a8f7a",tags:["Vivencial","Naturaleza","Aventura"],desc:"Noche en casa de familias y caminata a los templos Pachatata.",v2025:19467,sat:96.2},
+ {id:"reserva",name:"Reserva Nac. del Titicaca",color:"#2e7d5b",tags:["Naturaleza","Aventura"],desc:"Área protegida: aves, totorales y paisaje lacustre.",v2025:102362,sat:81.2},
+ {id:"sillustani",name:"Sillustani",color:"#b5842e",tags:["Historia","Cultura"],desc:"Chullpas funerarias preincas a orillas de la laguna Umayo.",v2025:34000,sat:95.7}
+];
+const POS=["bonito","lindo","hermoso","vistas","visitar","interesante","recomendado","historia"];
+const NEG=["soles","no","nada","frío","alto","después","ofrecen","espera"];
+const INTERESTS=["Cultura","Naturaleza","Vivencial","Aventura","Historia"];
+const sel=new Set(["Cultura","Vivencial"]);
+
+/* ---------- i18n ---------- */
+const T={
+ es:{brand:"Titicaca Smart Tourism",title:"Tu viaje al Lago Titicaca, recomendado para ti",lead:"Sistema inteligente que predice qué atractivos disfrutarás más, con soporte en español, quechua y aymara.",tag1:"🤖 Recomendación con IA",tag2:"🗣️ Multilingüe",tag3:"🌱 Turismo sostenible",b_install:"📲 Instalar app",eye1:"Recomendador",h_form:"¿Qué tipo de experiencia buscas?",p_form:"Elige tus intereses y te recomendamos los atractivos del lago con mayor afinidad.",l_int:"Intereses",l_bud:"Presupuesto",l_dur:"Duración",o_low:"Económico",o_mid:"Medio",o_high:"Alto",o_d1:"1 día",o_d2:"2 días",o_d3:"3+ días",b_go:"Recomendar mi viaje",note_rec:"La afinidad combina tus intereses con la satisfacción real del modelo por atractivo.",eye_m:"Resultados del modelo",h_model:"Satisfacción del visitante (modelo real)",p_model:"319 reseñas reales de Google Maps (2020–2025), clasificadas con XGBoost e interpretadas con SHAP.",s_sat:"Satisfacción global",s_auc:"AUC (XGBoost)",s_n:"Reseñas 2020–2025",s_atr:"Atractivos",h_bar:"Satisfacción por atractivo",h_pos:"😊 Palabras de satisfacción",h_neg:"😠 Palabras de insatisfacción",note_model:"Hallazgo: las Islas Uros, el atractivo más visitado, tienen la menor satisfacción (65%) por quejas de precio (\"soles\").",eye2:"Datos oficiales",h_data:"Visitantes al Lago Titicaca en 2025",p_data:"Llegadas por atractivo. Fuente oficial MINCETUR (datosTurismo).",eye3:"Asistente",h_chat:"Pregúntale al asistente multilingüe",b_send:"Enviar",ph_chat:"Escribe en español, quechua o aymara…",foot1:"Prototipo de tesis: recomendación turística con aprendizaje automático, predicción explicable de la satisfacción (SHAP), soporte quechua/aymara y mejora continua (MLOps).",foot2:"Datos: Google Maps (satisfacción) + MINCETUR (visitantes). Elroy Vargas · Juliaca, Puno.",why:"Coincide con",greet:"¡Hola! Soy tu guía del Titicaca. ¿Qué te gustaría visitar?"},
+ qu:{brand:"Titiqaqa Smart Tourism",title:"Titiqaqa quchaman puriynykita, qamman churasqa",lead:"Yuyayniyuq sistema, mayqin atractivokunatas aswan kusikunkimanta willakun; español, quechua, aymara simipi.",tag1:"🤖 IA recomendación",tag2:"🗣️ Askha simi",tag3:"🌱 Allin turismo",b_install:"📲 App churay",eye1:"Akllachiq",h_form:"¿Ima laya experienciatam maskhanki?",p_form:"Munasqaykikunata akllay, chaymanta atractivokunata willasqayki.",l_int:"Munaykuna",l_bud:"Qullqi",l_dur:"Unay",o_low:"Pisi",o_mid:"Chawpi",o_high:"Ancha",o_d1:"1 p'unchaw",o_d2:"2 p'unchaw",o_d3:"3+ p'unchaw",b_go:"Puriyniyta akllachiy",note_rec:"Afinidadqa munasqaykita atractivop satisfacciónninwan tupachin.",eye_m:"Modelop ruwasqan",h_model:"Riqsichiq satisfacción (cheqaq modelo)",p_model:"319 cheqaq Google Maps reseñas (2020–2025), XGBoostwan, SHAPwan.",s_sat:"Hinantin satisfacción",s_auc:"AUC (XGBoost)",s_n:"Reseñas 2020–2025",s_atr:"Atractivokuna",h_bar:"Sapa atractivop satisfacciónnin",h_pos:"😊 Kusikuy simikuna",h_neg:"😠 Mana kusikuy simikuna",note_model:"Tariy: Islas Uros, aswan watukusqa, pisi satisfacciónniyuq (65%), qullqi ('soles') rayku.",eye2:"Cheqaq willakuy",h_data:"2025 watapi Titiqaqaman riqkuna",p_data:"Sapa atractivoman chayaqkuna. MINCETUR willakuy.",eye3:"Yanapaq",h_chat:"Askha simi yanapaqman tapuy",b_send:"Apachiy",ph_chat:"Qillqay español, quechua utaq aymara simipi…",foot1:"Tesis prototipo: IA turismo akllachiq, SHAP, quechua/aymara simi, MLOps.",foot2:"Willakuy: Google Maps + MINCETUR. Elroy Vargas · Juliaca, Puno.",why:"Tupan",greet:"¡Napaykullayki! Titiqaqa pusaqniykim kani. ¿Imatam watukuyta munanki?"},
+ ay:{brand:"Titiqaqa Smart Tourism",title:"Titiqaqa qutaru sarnaqäwima, jumataki uñt'ayata",lead:"Amuyt'ayani sistema, kawkïri uñjäwinaksa juk'ampi kusisksma uñt'ayi; kastillanu, aymara, quechua arunakana.",tag1:"🤖 IA iwxäwi",tag2:"🗣️ Walja aru",tag3:"🌱 Suma turismo",b_install:"📲 App uchaña",eye1:"Ajlliri",h_form:"¿Kuna uñjäwis thaqhta?",p_form:"Munañanakama ajllim, ukatxa uñjäwinaka uñt'ayäma.",l_int:"Munañanaka",l_bud:"Qullqi",l_dur:"Jaya",o_low:"Juk'a",o_mid:"Taypi",o_high:"Jach'a",o_d1:"1 uru",o_d2:"2 uru",o_d3:"3+ uru",b_go:"Sarnaqäwija ajllim",note_rec:"Afinidadax munañanakama uñjäwin satisfacciónampi mayachi.",eye_m:"Modelon luräwipa",h_model:"Sarnaqirin satisfacciónapa (chiqa modelo)",p_model:"319 chiqa Google Maps reseñanaka (2020–2025), XGBoostampi, SHAPampi.",s_sat:"Taqpach satisfacción",s_auc:"AUC (XGBoost)",s_n:"Reseñanaka 2020–2025",s_atr:"Uñjäwinaka",h_bar:"Sapa uñjäwin satisfacciónapa",h_pos:"😊 Kusisiñ arunaka",h_neg:"😠 Jan kusisiñ arunaka",note_model:"Katjäwi: Islas Uros, juk'ampi sarata, juk'a satisfacciónani (65%), qullqi ('soles') layku.",eye2:"Chiqa yatiyäwi",h_data:"2025 maran Titiqaqaru saririnaka",p_data:"Sapa uñjäwiru puriri. MINCETUR yatiyäwi.",eye3:"Yanapiri",h_chat:"Walja aru yanapiriru jiskht'am",b_send:"Apayaña",ph_chat:"Qillqam kastillanu, aymara jan ukax quechua aruna…",foot1:"Tesis prototipo: IA turismo ajlliri, SHAP, quechua/aymara aru, MLOps.",foot2:"Yatiyäwi: Google Maps + MINCETUR. Elroy Vargas · Juliaca, Puno.",why:"Uñtasi",greet:"¡Kamisaraki! Titiqaqa irpiriwayätwa. ¿Kuns uñjaña munta?"}
+};
+let L="es", WHY="Coincide con";
+
+function applyLang(code){
+ L=code; const d=T[code]; WHY=d.why;
+ document.querySelectorAll("[data-t]").forEach(el=>{const k=el.getAttribute("data-t"); if(d[k]!=null) el.textContent=d[k];});
+ document.querySelectorAll("[data-ph]").forEach(el=>{const k=el.getAttribute("data-ph"); if(d[k]!=null) el.placeholder=d[k];});
+ document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===code));
+ renderResults();
+ document.getElementById("msgs").innerHTML=""; botSay(d.greet);
+}
+
+/* ---------- chips ---------- */
+const chipsEl=document.getElementById("chips");
+INTERESTS.forEach(it=>{
+ const b=document.createElement("button"); b.className="chip"; b.textContent=it;
+ b.setAttribute("aria-pressed", sel.has(it));
+ b.onclick=()=>{ sel.has(it)?sel.delete(it):sel.add(it); b.setAttribute("aria-pressed", sel.has(it)); };
+ chipsEl.appendChild(b);
+});
+
+/* ---------- recomendador (usa satisfacción real como señal) ---------- */
+function score(a){
+ const inter=a.tags.filter(t=>sel.has(t));
+ const base= sel.size? inter.length/Math.max(sel.size,1):0;
+ const pct=Math.round(0.55*(40+base*55) + 0.45*a.sat); // mezcla afinidad + satisfacción real
+ return {pct:Math.min(99,pct), inter};
+}
+function renderResults(){
+ const res=document.getElementById("results"); res.innerHTML="";
+ const ranked=ATTR.map(a=>({a,...score(a)})).sort((x,y)=>y.pct-x.pct);
+ ranked.forEach(({a,pct,inter})=>{
+  const el=document.createElement("article"); el.className="rec";
+  el.innerHTML=`
+   <div class="top" style="background:linear-gradient(135deg,${a.color},#0a4a5e)">
+     <span class="match">${pct}%</span>${a.name}</div>
+   <div class="body">
+     <div class="desc">${a.desc}</div>
+     <div class="tgs">${a.tags.map(t=>`<b>${t}</b>`).join("")}</div>
+     <div class="bar"><i style="width:${pct}%"></i></div>
+     <div class="why">${inter.length?`✓ ${WHY}: ${inter.join(", ")}`:"—"} · ⭐ ${a.sat}%</div>
+   </div>`;
+  res.appendChild(el);
+ });
+}
+document.getElementById("go").onclick=renderResults;
+
+/* ---------- chart satisfacción (modelo) ---------- */
+const satEl=document.getElementById("chartSat");
+ATTR.slice().sort((a,b)=>b.sat-a.sat).forEach(a=>{
+ const col=a.sat>=90?"#2e7d5b":a.sat>=80?"#0b6e8c":"#c0392b";
+ const r=document.createElement("div"); r.className="crow";
+ r.innerHTML=`<span>${a.name}</span><div class="track"><i style="width:${a.sat}%;background:${col}"></i></div><span class="val" style="color:${col}">${a.sat}%</span>`;
+ satEl.appendChild(r);
+});
+/* palabras */
+document.getElementById("posWords").innerHTML=POS.map(w=>`<span class="wtag pos">${w}</span>`).join("");
+document.getElementById("negWords").innerHTML=NEG.map(w=>`<span class="wtag neg">${w}</span>`).join("");
+
+/* ---------- chart visitantes oficiales ---------- */
+const chartEl=document.getElementById("chart");
+const maxv=Math.max(...ATTR.map(a=>a.v2025));
+ATTR.slice().sort((a,b)=>b.v2025-a.v2025).forEach(a=>{
+ const r=document.createElement("div"); r.className="crow";
+ r.innerHTML=`<span>${a.name}</span><div class="track"><i style="width:${Math.round(a.v2025/maxv*100)}%;background:var(--primary)"></i></div><span class="val" style="color:var(--primary)">${a.v2025.toLocaleString("es-PE")}</span>`;
+ chartEl.appendChild(r);
+});
+
+/* ---------- asistente ---------- */
+const msgs=document.getElementById("msgs");
+function add(txt,cls){const m=document.createElement("div");m.className="msg "+cls;m.textContent=txt;msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;}
+function botSay(t){add(t,"bot");}
+function reply(q){
+ const s=q.toLowerCase();
+ const found=ATTR.find(a=>s.includes(a.name.toLowerCase().split(" ")[0]) || (a.id==="uros"&&s.includes("uros")) || (a.id==="taquile"&&s.includes("taquile")));
+ if(found) return `${found.name}: ${found.desc} (${found.v2025.toLocaleString("es-PE")} visitantes en 2025; satisfacción ${found.sat}%).`;
+ if(s.includes("satisf")||s.includes("mejor")) return "Según el modelo, Amantaní (96%) y Sillustani (96%) tienen la mayor satisfacción; las Islas Uros la menor (65%).";
+ return L==="es"?"Te recomiendo empezar por las Islas Uros y Taquile. ¿Te interesa el turismo vivencial?":
+        L==="qu"?"Islas Uros, Taquile ima qallariyta akllachiykim. ¿Vivencial turismota munankichu?":
+                 "Islas Uros, Taquile uka qalltañ iwxsma. ¿Vivencial turismo muntati?";
+}
+function sendChat(){
+ const inp=document.getElementById("chatin"); const q=inp.value.trim(); if(!q)return;
+ add(q,"me"); inp.value=""; setTimeout(()=>botSay(reply(q)),300);
+}
+document.getElementById("chatsend").onclick=sendChat;
+document.getElementById("chatin").addEventListener("keydown",e=>{if(e.key==="Enter")sendChat();});
+
+/* ---------- tema ---------- */
+document.getElementById("theme").onclick=()=>{
+ const cur=document.documentElement.getAttribute("data-theme");
+ const next=cur==="dark"?"light":(cur==="light"?"dark":(matchMedia("(prefers-color-scheme:dark)").matches?"light":"dark"));
+ document.documentElement.setAttribute("data-theme",next);
+ try{localStorage.setItem("tt-theme",next)}catch(e){}
+};
+try{const s=localStorage.getItem("tt-theme");if(s)document.documentElement.setAttribute("data-theme",s)}catch(e){}
+
+/* ---------- idioma ---------- */
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>applyLang(b.dataset.lang));
+
+/* ---------- PWA: instalar + service worker ---------- */
+let deferredPrompt=null;
+const installBtn=document.getElementById("install");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display="inline-block";});
+installBtn.onclick=async()=>{ if(!deferredPrompt)return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.style.display="none"; };
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+
+/* init */
+renderResults();
+botSay(T.es.greet);
+</script>
+</body>
+</html>
