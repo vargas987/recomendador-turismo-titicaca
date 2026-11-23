@@ -4,7 +4,7 @@
 
 Autor: **Elroy Vargas** — E.P. de Ingeniería de Sistemas, Universidad Peruana Unión (UPeU), Juliaca, Puno, Perú.
 
-🔗 **App en vivo:** https://USUARIO.github.io/recomendador-turismo-titicaca/ *(se activa con GitHub Pages)*
+🔗 **App en vivo:** https://vargas987.github.io/recomendador-turismo-titicaca/ *(se activa con GitHub Pages)*
 
 ---
 
