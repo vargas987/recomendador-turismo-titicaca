@@ -168,7 +168,7 @@ a{color:var(--primary)}
         </div>
         <div class="field">
           <label class="q-label" style="margin-top:.6rem" data-t="l_dur">Duración</label>
-          <select id="dur"><option value="1" data-t="o_d1">1 día</option><option value="2" selected data-t="o_d2">2 días</option><option value="3" data-t="o_d3">3+ días</option></select>
+          <select id="dur"></select>
         </div>
       </div>
       <button class="cta" id="go" data-t="b_go">Recomendar mi viaje</button>
@@ -263,12 +263,34 @@ const T={
 };
 let L="es", WHY="Coincide con";
 
+/* ---------- opciones de duración (multilingües) ---------- */
+const DURS=[1,2,3,4,5,6,7,30,365];
+const DURLABELS={
+ es:["1 día","2 días","3 días","4 días","5 días","6 días","1 semana","1 mes","1 año"],
+ en:["1 day","2 days","3 days","4 days","5 days","6 days","1 week","1 month","1 year"],
+ pt:["1 dia","2 dias","3 dias","4 dias","5 dias","6 dias","1 semana","1 mês","1 ano"],
+ fr:["1 jour","2 jours","3 jours","4 jours","5 jours","6 jours","1 semaine","1 mois","1 an"],
+ it:["1 giorno","2 giorni","3 giorni","4 giorni","5 giorni","6 giorni","1 settimana","1 mese","1 anno"],
+ qu:["1 p'unchaw","2 p'unchaw","3 p'unchaw","4 p'unchaw","5 p'unchaw","6 p'unchaw","1 simana","1 killa","1 wata"],
+ ay:["1 uru","2 uru","3 uru","4 uru","5 uru","6 uru","1 simana","1 phaxsi","1 mara"],
+ zh:["1 天","2 天","3 天","4 天","5 天","6 天","1 周","1 个月","1 年"],
+ ja:["1 日","2 日","3 日","4 日","5 日","6 日","1 週間","1 か月","1 年"]
+};
+function buildDur(){
+ const dsel=document.getElementById('dur'); if(!dsel) return;
+ const cur=dsel.value||'2';
+ const labels=DURLABELS[L]||DURLABELS.es;
+ dsel.innerHTML=DURS.map((v,i)=>`<option value="${v}">${labels[i]}</option>`).join('');
+ dsel.value=cur;
+}
+
 function applyLang(code){
  L=code; const d=T[code]; WHY=d.why;
  document.querySelectorAll("[data-t]").forEach(el=>{const k=el.getAttribute("data-t"); if(d[k]!=null) el.textContent=d[k];});
  document.querySelectorAll("[data-ph]").forEach(el=>{const k=el.getAttribute("data-ph"); if(d[k]!=null) el.placeholder=d[k];});
  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===code));
  var _ls=document.getElementById("langsel"); if(_ls){ var _has=Array.from(_ls.options).some(function(o){return o.value===code;}); _ls.value=_has?code:""; }
+ buildDur();
  renderResults();
  document.getElementById("msgs").innerHTML=""; botSay(d.greet);
 }
@@ -386,6 +408,7 @@ installBtn.onclick=async()=>{ if(!deferredPrompt)return; deferredPrompt.prompt()
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 
 /* init */
+buildDur();
 renderResults();
 botSay(T.es.greet);
 </script>
