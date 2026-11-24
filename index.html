@@ -50,6 +50,7 @@ button{font-family:var(--sans);cursor:pointer}
 .langsel{background:rgba(255,255,255,.14);color:#eaf6fb;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 12px;font-size:.85rem;font-family:var(--sans);max-width:160px;cursor:pointer}
 .langsel option{color:#132430}
 .langsel optgroup{color:#132430;font-weight:700}
+.langwrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .theme-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#eaf6fb;border-radius:999px;width:34px;height:34px;font-size:1rem}
 .hero h1{font-size:clamp(1.7rem,5.2vw,2.7rem);margin:1.4rem 0 .5rem;line-height:1.1}
 .hero p.lead{font-size:1.05rem;max-width:40ch;color:#d5edf5;margin:0}
@@ -121,21 +122,22 @@ a{color:var(--primary)}
         <span data-t="brand">Titicaca Smart Tourism</span>
       </div>
       <div class="controls">
-        <select class="langsel" id="langsel" aria-label="Idioma">
-          <optgroup label="Idiomas del Perú">
-            <option value="es">🇵🇪 Español</option>
-            <option value="qu">🏔️ Quechua</option>
-            <option value="ay">🏔️ Aymara</option>
-          </optgroup>
-          <optgroup label="Idiomas internacionales">
+        <div class="langwrap">
+          <div class="lang" role="group" aria-label="Idiomas del Perú">
+            <button data-lang="es" aria-pressed="true">ES</button>
+            <button data-lang="qu" aria-pressed="false">Quechua</button>
+            <button data-lang="ay" aria-pressed="false">Aymara</button>
+          </div>
+          <select class="langsel" id="langsel" aria-label="Idiomas internacionales">
+            <option value="">🌍 Internacional</option>
             <option value="en">🇬🇧 English</option>
             <option value="pt">🇧🇷 Português</option>
             <option value="fr">🇫🇷 Français</option>
             <option value="it">🇮🇹 Italiano</option>
             <option value="zh">🇨🇳 中文</option>
             <option value="ja">🇯🇵 日本語</option>
-          </optgroup>
-        </select>
+          </select>
+        </div>
         <button class="theme-btn" id="theme" title="Tema" aria-label="Cambiar tema">◐</button>
       </div>
     </div>
@@ -265,7 +267,8 @@ function applyLang(code){
  L=code; const d=T[code]; WHY=d.why;
  document.querySelectorAll("[data-t]").forEach(el=>{const k=el.getAttribute("data-t"); if(d[k]!=null) el.textContent=d[k];});
  document.querySelectorAll("[data-ph]").forEach(el=>{const k=el.getAttribute("data-ph"); if(d[k]!=null) el.placeholder=d[k];});
- var _ls=document.getElementById("langsel"); if(_ls) _ls.value=code;
+ document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===code));
+ var _ls=document.getElementById("langsel"); if(_ls){ var _has=Array.from(_ls.options).some(function(o){return o.value===code;}); _ls.value=_has?code:""; }
  renderResults();
  document.getElementById("msgs").innerHTML=""; botSay(d.greet);
 }
@@ -372,7 +375,8 @@ document.getElementById("theme").onclick=()=>{
 try{const s=localStorage.getItem("tt-theme");if(s)document.documentElement.setAttribute("data-theme",s)}catch(e){}
 
 /* ---------- idioma ---------- */
-document.getElementById("langsel").onchange=function(e){applyLang(e.target.value);};
+document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){applyLang(b.dataset.lang);};});
+document.getElementById("langsel").onchange=function(e){ if(e.target.value) applyLang(e.target.value); };
 
 /* ---------- PWA: instalar + service worker ---------- */
 let deferredPrompt=null;
