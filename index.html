@@ -159,7 +159,7 @@ a{color:var(--primary)}
       <button class="cta" id="go" data-t="b_go">Recomendar mi viaje</button>
     </div>
     <div class="results" id="results"></div>
-    <p class="note" data-t="note_rec">La afinidad combina tus intereses con la satisfacción real del modelo por atractivo.</p>
+    <p class="note" data-t="note_rec">La afinidad combina tus intereses, tu presupuesto y duración, y la satisfacción real del modelo (reseñas).</p>
   </section>
 
   <section>
@@ -221,12 +221,13 @@ a{color:var(--primary)}
 
 <script>
 /* ---------- datos atractivos (visitantes 2025 oficiales + satisfacción real del modelo) ---------- */
+// costo: 1=económico 2=medio 3=alto | dias: días recomendados de visita
 const ATTR=[
- {id:"uros",name:"Islas Uros",color:"#0b6e8c",tags:["Vivencial","Cultura","Naturaleza"],desc:"Islas flotantes de totora, turismo vivencial con familias uros.",v2025:73942,sat:65.0},
- {id:"taquile",name:"Isla Taquile",color:"#1a7f94",tags:["Cultura","Vivencial","Historia"],desc:"Textilería Patrimonio de la Humanidad y vistas del lago.",v2025:62546,sat:92.9},
- {id:"amantani",name:"Isla Amantaní",color:"#2a8f7a",tags:["Vivencial","Naturaleza","Aventura"],desc:"Noche en casa de familias y caminata a los templos Pachatata.",v2025:19467,sat:96.2},
- {id:"reserva",name:"Reserva Nac. del Titicaca",color:"#2e7d5b",tags:["Naturaleza","Aventura"],desc:"Área protegida: aves, totorales y paisaje lacustre.",v2025:102362,sat:81.2},
- {id:"sillustani",name:"Sillustani",color:"#b5842e",tags:["Historia","Cultura"],desc:"Chullpas funerarias preincas a orillas de la laguna Umayo.",v2025:34000,sat:95.7}
+ {id:"uros",name:"Islas Uros",color:"#0b6e8c",tags:["Vivencial","Cultura","Naturaleza"],desc:"Islas flotantes de totora, turismo vivencial con familias uros.",v2025:73942,sat:65.0,costo:1,dias:1},
+ {id:"taquile",name:"Isla Taquile",color:"#1a7f94",tags:["Cultura","Vivencial","Historia"],desc:"Textilería Patrimonio de la Humanidad y vistas del lago.",v2025:62546,sat:92.9,costo:2,dias:1},
+ {id:"amantani",name:"Isla Amantaní",color:"#2a8f7a",tags:["Vivencial","Naturaleza","Aventura"],desc:"Noche en casa de familias y caminata a los templos Pachatata.",v2025:19467,sat:96.2,costo:3,dias:2},
+ {id:"reserva",name:"Reserva Nac. del Titicaca",color:"#2e7d5b",tags:["Naturaleza","Aventura"],desc:"Área protegida: aves, totorales y paisaje lacustre.",v2025:102362,sat:81.2,costo:2,dias:1},
+ {id:"sillustani",name:"Sillustani",color:"#b5842e",tags:["Historia","Cultura"],desc:"Chullpas funerarias preincas a orillas de la laguna Umayo.",v2025:34000,sat:95.7,costo:1,dias:1}
 ];
 const POS=["bonito","lindo","hermoso","vistas","visitar","interesante","recomendado","historia"];
 const NEG=["soles","no","nada","frío","alto","después","ofrecen","espera"];
@@ -235,7 +236,7 @@ const sel=new Set(["Cultura","Vivencial"]);
 
 /* ---------- i18n ---------- */
 const T={
- es:{brand:"Titicaca Smart Tourism",title:"Tu viaje al Lago Titicaca, recomendado para ti",lead:"Sistema inteligente que predice qué atractivos disfrutarás más, con soporte en español, quechua y aymara.",tag1:"🤖 Recomendación con IA",tag2:"🗣️ Multilingüe",tag3:"🌱 Turismo sostenible",b_install:"📲 Instalar app",eye1:"Recomendador",h_form:"¿Qué tipo de experiencia buscas?",p_form:"Elige tus intereses y te recomendamos los atractivos del lago con mayor afinidad.",l_int:"Intereses",l_bud:"Presupuesto",l_dur:"Duración",o_low:"Económico",o_mid:"Medio",o_high:"Alto",o_d1:"1 día",o_d2:"2 días",o_d3:"3+ días",b_go:"Recomendar mi viaje",note_rec:"La afinidad combina tus intereses con la satisfacción real del modelo por atractivo.",eye_m:"Resultados del modelo",h_model:"Satisfacción del visitante (modelo real)",p_model:"319 reseñas reales de Google Maps (2020–2025), clasificadas con XGBoost e interpretadas con SHAP.",s_sat:"Satisfacción global",s_auc:"AUC (XGBoost)",s_n:"Reseñas 2020–2025",s_atr:"Atractivos",h_bar:"Satisfacción por atractivo",h_pos:"😊 Palabras de satisfacción",h_neg:"😠 Palabras de insatisfacción",note_model:"Hallazgo: las Islas Uros, el atractivo más visitado, tienen la menor satisfacción (65%) por quejas de precio (\"soles\").",eye2:"Datos oficiales",h_data:"Visitantes al Lago Titicaca en 2025",p_data:"Llegadas por atractivo. Fuente oficial MINCETUR (datosTurismo).",eye3:"Asistente",h_chat:"Pregúntale al asistente multilingüe",b_send:"Enviar",ph_chat:"Escribe en español, quechua o aymara…",foot1:"Prototipo de tesis: recomendación turística con aprendizaje automático, predicción explicable de la satisfacción (SHAP), soporte quechua/aymara y mejora continua (MLOps).",foot2:"Datos: Google Maps (satisfacción) + MINCETUR (visitantes). Elroy Vargas · Juliaca, Puno.",why:"Coincide con",greet:"¡Hola! Soy tu guía del Titicaca. ¿Qué te gustaría visitar?"},
+ es:{brand:"Titicaca Smart Tourism",title:"Tu viaje al Lago Titicaca, recomendado para ti",lead:"Sistema inteligente que predice qué atractivos disfrutarás más, con soporte en español, quechua y aymara.",tag1:"🤖 Recomendación con IA",tag2:"🗣️ Multilingüe",tag3:"🌱 Turismo sostenible",b_install:"📲 Instalar app",eye1:"Recomendador",h_form:"¿Qué tipo de experiencia buscas?",p_form:"Elige tus intereses y te recomendamos los atractivos del lago con mayor afinidad.",l_int:"Intereses",l_bud:"Presupuesto",l_dur:"Duración",o_low:"Económico",o_mid:"Medio",o_high:"Alto",o_d1:"1 día",o_d2:"2 días",o_d3:"3+ días",b_go:"Recomendar mi viaje",note_rec:"La afinidad combina tus intereses, tu presupuesto y duración, y la satisfacción real del modelo (reseñas).",eye_m:"Resultados del modelo",h_model:"Satisfacción del visitante (modelo real)",p_model:"319 reseñas reales de Google Maps (2020–2025), clasificadas con XGBoost e interpretadas con SHAP.",s_sat:"Satisfacción global",s_auc:"AUC (XGBoost)",s_n:"Reseñas 2020–2025",s_atr:"Atractivos",h_bar:"Satisfacción por atractivo",h_pos:"😊 Palabras de satisfacción",h_neg:"😠 Palabras de insatisfacción",note_model:"Hallazgo: las Islas Uros, el atractivo más visitado, tienen la menor satisfacción (65%) por quejas de precio (\"soles\").",eye2:"Datos oficiales",h_data:"Visitantes al Lago Titicaca en 2025",p_data:"Llegadas por atractivo. Fuente oficial MINCETUR (datosTurismo).",eye3:"Asistente",h_chat:"Pregúntale al asistente multilingüe",b_send:"Enviar",ph_chat:"Escribe en español, quechua o aymara…",foot1:"Prototipo de tesis: recomendación turística con aprendizaje automático, predicción explicable de la satisfacción (SHAP), soporte quechua/aymara y mejora continua (MLOps).",foot2:"Datos: Google Maps (satisfacción) + MINCETUR (visitantes). Elroy Vargas · Juliaca, Puno.",why:"Coincide con",greet:"¡Hola! Soy tu guía del Titicaca. ¿Qué te gustaría visitar?"},
  qu:{brand:"Titiqaqa Smart Tourism",title:"Titiqaqa quchaman puriynykita, qamman churasqa",lead:"Yuyayniyuq sistema, mayqin atractivokunatas aswan kusikunkimanta willakun; español, quechua, aymara simipi.",tag1:"🤖 IA recomendación",tag2:"🗣️ Askha simi",tag3:"🌱 Allin turismo",b_install:"📲 App churay",eye1:"Akllachiq",h_form:"¿Ima laya experienciatam maskhanki?",p_form:"Munasqaykikunata akllay, chaymanta atractivokunata willasqayki.",l_int:"Munaykuna",l_bud:"Qullqi",l_dur:"Unay",o_low:"Pisi",o_mid:"Chawpi",o_high:"Ancha",o_d1:"1 p'unchaw",o_d2:"2 p'unchaw",o_d3:"3+ p'unchaw",b_go:"Puriyniyta akllachiy",note_rec:"Afinidadqa munasqaykita atractivop satisfacciónninwan tupachin.",eye_m:"Modelop ruwasqan",h_model:"Riqsichiq satisfacción (cheqaq modelo)",p_model:"319 cheqaq Google Maps reseñas (2020–2025), XGBoostwan, SHAPwan.",s_sat:"Hinantin satisfacción",s_auc:"AUC (XGBoost)",s_n:"Reseñas 2020–2025",s_atr:"Atractivokuna",h_bar:"Sapa atractivop satisfacciónnin",h_pos:"😊 Kusikuy simikuna",h_neg:"😠 Mana kusikuy simikuna",note_model:"Tariy: Islas Uros, aswan watukusqa, pisi satisfacciónniyuq (65%), qullqi ('soles') rayku.",eye2:"Cheqaq willakuy",h_data:"2025 watapi Titiqaqaman riqkuna",p_data:"Sapa atractivoman chayaqkuna. MINCETUR willakuy.",eye3:"Yanapaq",h_chat:"Askha simi yanapaqman tapuy",b_send:"Apachiy",ph_chat:"Qillqay español, quechua utaq aymara simipi…",foot1:"Tesis prototipo: IA turismo akllachiq, SHAP, quechua/aymara simi, MLOps.",foot2:"Willakuy: Google Maps + MINCETUR. Elroy Vargas · Juliaca, Puno.",why:"Tupan",greet:"¡Napaykullayki! Titiqaqa pusaqniykim kani. ¿Imatam watukuyta munanki?"},
  ay:{brand:"Titiqaqa Smart Tourism",title:"Titiqaqa qutaru sarnaqäwima, jumataki uñt'ayata",lead:"Amuyt'ayani sistema, kawkïri uñjäwinaksa juk'ampi kusisksma uñt'ayi; kastillanu, aymara, quechua arunakana.",tag1:"🤖 IA iwxäwi",tag2:"🗣️ Walja aru",tag3:"🌱 Suma turismo",b_install:"📲 App uchaña",eye1:"Ajlliri",h_form:"¿Kuna uñjäwis thaqhta?",p_form:"Munañanakama ajllim, ukatxa uñjäwinaka uñt'ayäma.",l_int:"Munañanaka",l_bud:"Qullqi",l_dur:"Jaya",o_low:"Juk'a",o_mid:"Taypi",o_high:"Jach'a",o_d1:"1 uru",o_d2:"2 uru",o_d3:"3+ uru",b_go:"Sarnaqäwija ajllim",note_rec:"Afinidadax munañanakama uñjäwin satisfacciónampi mayachi.",eye_m:"Modelon luräwipa",h_model:"Sarnaqirin satisfacciónapa (chiqa modelo)",p_model:"319 chiqa Google Maps reseñanaka (2020–2025), XGBoostampi, SHAPampi.",s_sat:"Taqpach satisfacción",s_auc:"AUC (XGBoost)",s_n:"Reseñanaka 2020–2025",s_atr:"Uñjäwinaka",h_bar:"Sapa uñjäwin satisfacciónapa",h_pos:"😊 Kusisiñ arunaka",h_neg:"😠 Jan kusisiñ arunaka",note_model:"Katjäwi: Islas Uros, juk'ampi sarata, juk'a satisfacciónani (65%), qullqi ('soles') layku.",eye2:"Chiqa yatiyäwi",h_data:"2025 maran Titiqaqaru saririnaka",p_data:"Sapa uñjäwiru puriri. MINCETUR yatiyäwi.",eye3:"Yanapiri",h_chat:"Walja aru yanapiriru jiskht'am",b_send:"Apayaña",ph_chat:"Qillqam kastillanu, aymara jan ukax quechua aruna…",foot1:"Tesis prototipo: IA turismo ajlliri, SHAP, quechua/aymara aru, MLOps.",foot2:"Yatiyäwi: Google Maps + MINCETUR. Elroy Vargas · Juliaca, Puno.",why:"Uñtasi",greet:"¡Kamisaraki! Titiqaqa irpiriwayätwa. ¿Kuns uñjaña munta?"}
 };
@@ -263,8 +264,16 @@ INTERESTS.forEach(it=>{
 function score(a){
  const inter=a.tags.filter(t=>sel.has(t));
  const base= sel.size? inter.length/Math.max(sel.size,1):0;
- const pct=Math.round(0.55*(40+base*55) + 0.45*a.sat); // mezcla afinidad + satisfacción real
- return {pct:Math.min(99,pct), inter};
+ const budget={bajo:1,medio:2,alto:3}[document.getElementById('budget').value]||2;
+ const dur=parseInt(document.getElementById('dur').value)||2;
+ // presupuesto: premia si el atractivo cabe en tu presupuesto, penaliza si es más caro
+ let bud = a.costo<=budget ? 6 : -10*(a.costo-budget);
+ // duración: premia si alcanza tu tiempo, penaliza si necesita más días; bonus si aprovechas pernocte
+ let dd  = a.dias<=dur ? 5 : -12*(a.dias-dur);
+ if(a.dias>=2 && dur>=3) dd+=4;
+ // mezcla: intereses + satisfacción real + presupuesto + duración
+ const pct=Math.round(0.50*(40+base*55) + 0.40*a.sat + bud + dd);
+ return {pct:Math.max(20,Math.min(99,pct)), inter};
 }
 function renderResults(){
  const res=document.getElementById("results"); res.innerHTML="";
