@@ -49,6 +49,7 @@ button{font-family:var(--sans);cursor:pointer}
 .lang button[aria-pressed="true"]{background:#eaf6fb;color:#0a5068}
 .langsel{background:rgba(255,255,255,.14);color:#eaf6fb;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 12px;font-size:.85rem;font-family:var(--sans);max-width:160px;cursor:pointer}
 .langsel option{color:#132430}
+.langsel optgroup{color:#132430;font-weight:700}
 .theme-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#eaf6fb;border-radius:999px;width:34px;height:34px;font-size:1rem}
 .hero h1{font-size:clamp(1.7rem,5.2vw,2.7rem);margin:1.4rem 0 .5rem;line-height:1.1}
 .hero p.lead{font-size:1.05rem;max-width:40ch;color:#d5edf5;margin:0}
@@ -121,15 +122,19 @@ a{color:var(--primary)}
       </div>
       <div class="controls">
         <select class="langsel" id="langsel" aria-label="Idioma">
-          <option value="es">🇪🇸 Español</option>
-          <option value="en">🇬🇧 English</option>
-          <option value="pt">🇧🇷 Português</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="qu">🏔️ Quechua</option>
-          <option value="ay">🏔️ Aymara</option>
-          <option value="zh">🇨🇳 中文</option>
-          <option value="ja">🇯🇵 日本語</option>
+          <optgroup label="Idiomas del Perú">
+            <option value="es">🇵🇪 Español</option>
+            <option value="qu">🏔️ Quechua</option>
+            <option value="ay">🏔️ Aymara</option>
+          </optgroup>
+          <optgroup label="Idiomas internacionales">
+            <option value="en">🇬🇧 English</option>
+            <option value="pt">🇧🇷 Português</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ja">🇯🇵 日本語</option>
+          </optgroup>
         </select>
         <button class="theme-btn" id="theme" title="Tema" aria-label="Cambiar tema">◐</button>
       </div>
