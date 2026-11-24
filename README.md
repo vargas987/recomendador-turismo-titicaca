@@ -37,6 +37,18 @@ Gráficos en [`figures/`](figures/). Datos limpios en [`data/`](data/).
 
 ---
 
+## 📈 Modelo de demanda (Prophet)
+
+Modelo complementario de series temporales sobre la serie mensual oficial de visitantes (MINCETUR, 72 meses, 2020–2025):
+
+- **Pronóstico:** ≈ 184 700 visitantes (2026) y 217 200 (2027).
+- **Estacionalidad:** pico en enero–febrero (verano austral / Candelaria), valle entre abril y julio.
+- **Validación (reteniendo 2025):** MAPE ≈ 86 % → por el crecimiento atípico de 2025, el pronóstico es orientativo (bandas de confianza amplias).
+
+Código: [`model/modelo_demanda.py`](model/modelo_demanda.py) · Figura: `figures/fig_demanda_forecast.png`.
+
+---
+
 ## 🗂️ Estructura del repositorio
 
 ```
@@ -47,6 +59,7 @@ recomendador-turismo-titicaca/
 ├── icons/                # Iconos de la app
 ├── model/
 │   ├── modelo_satisfaccion.py   # Pipeline: limpieza, features, RF/XGBoost/TF-IDF, SHAP
+│   ├── modelo_demanda.py        # Pronóstico de demanda (Prophet) con datos MINCETUR
 │   └── requirements.txt
 ├── data/                 # reseñas limpias (2020-2025), métricas, resumen JSON
 ├── figures/              # 8 gráficos (satisfacción, SHAP, ROC, palabras, etc.)

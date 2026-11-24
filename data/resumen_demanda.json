@@ -1,0 +1,16 @@
+{
+  "n_meses": 72,
+  "periodo": "2020-01-01 a 2025-12-01",
+  "validacion_2025": {
+    "MAE": 18725.0,
+    "RMSE": 19669.0,
+    "MAPE_%": 85.5
+  },
+  "pronostico_anual": {
+    "2026": 184729,
+    "2027": 217247
+  },
+  "mes_pico": "Ene",
+  "mes_bajo": "Jul",
+  "total_2025_real": 258317
+}
